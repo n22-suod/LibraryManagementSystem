@@ -1,0 +1,247 @@
+﻿@{
+    ViewData["Title"] = "Login";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Management System</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6fc;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .main-container {
+            width: 920px;
+            min-height: 560px;
+            display: flex;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+        }
+
+        .left-panel {
+            width: 50%;
+            background: #e1e9ff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #19377d;
+            text-align: center;
+        }
+
+        .book-icon {
+            font-size: 75px;
+            margin-bottom: 25px;
+        }
+
+        .left-panel h1 {
+            font-size: 28px;
+            margin-bottom: 15px;
+        }
+
+        .subtitle {
+            font-size: 18px;
+            font-style: italic;
+            margin-bottom: 45px;
+        }
+
+        .books-icon {
+            font-size: 110px;
+        }
+
+        .right-panel {
+            width: 50%;
+            padding: 90px 50px;
+            background: white;
+        }
+
+        .right-panel h1 {
+            color: #142346;
+            font-size: 30px;
+            margin-bottom: 12px;
+        }
+
+        .description {
+            color: #606575;
+            margin-bottom: 45px;
+            font-size: 15px;
+        }
+
+        .input-group {
+            margin-bottom: 22px;
+        }
+
+        .input-group label {
+            display: block;
+            color: #555;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .input-group input {
+            width: 100%;
+            height: 45px;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 15px;
+            outline: none;
+        }
+
+        .input-group input:focus {
+            border-color: #19377d;
+        }
+
+        .login-button {
+            width: 100%;
+            height: 48px;
+            background: #19377d;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+
+        .login-button:hover {
+            background: #10275e;
+        }
+
+        .or-text {
+            text-align: center;
+            color: gray;
+            margin: 25px 0;
+        }
+
+        .create-button {
+            width: 100%;
+            height: 45px;
+            background: white;
+            color: #19377d;
+            border: 1px solid #19377d;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .create-button:hover {
+            background: #e1e9ff;
+        }
+
+        @@media (max-width: 750px) {
+            .main-container {
+                width: 95%;
+                flex-direction: column;
+            }
+
+            .left-panel, .right-panel {
+                width: 100%;
+            }
+
+            .left-panel {
+                padding: 35px;
+            }
+
+            .right-panel {
+                padding: 40px 30px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="main-container">
+
+        <!-- LEFT SIDE -->
+        <div class="left-panel">
+
+            <div class="book-icon">📖</div>
+
+            <h1>Management System</h1>
+
+            <p class="subtitle">Read • Borrow • Learn</p>
+
+            <div class="books-icon">📚</div>
+
+        </div>
+
+        <!-- RIGHT SIDE -->
+        <div class="right-panel">
+
+            <h1>Welcome Back! 👋</h1>
+
+            <p class="description">Sign in to your account</p>
+            @if (TempData["LoginError"] != null)
+{
+    <p style="color:red; margin-bottom:15px;">
+        @TempData["LoginError"]
+    </p>
+}
+            <form asp-controller="Account" asp-action="Login" method="post">
+    @Html.AntiForgeryToken()
+
+                <div class="input-group">
+                    <label>👤 Username</label>
+                    <input type="text"
+       name="username"
+       placeholder="Enter your username"
+       required>
+                    
+                </div>
+
+                <div class="input-group">
+                    <label>🔒 Password</label>
+                    <input type="password"
+       name="password"
+       placeholder="Enter your password"
+       required>
+                   
+                </div>
+
+                <button type="submit" class="login-button">
+    Login
+</button>
+                    
+             
+
+            </form>
+
+            <div class="or-text">──────── &nbsp; or &nbsp; ────────</div>
+
+            <form asp-controller="Account" asp-action="Register" method="get">
+
+    <button type="submit" class="create-button">
+        👤 Create an Account
+    </button>
+
+</form>
+
+        </div>
+
+    </div>
+
+</body>
+</html>

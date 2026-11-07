@@ -1,0 +1,31 @@
+﻿@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div style="text-align:center; margin-top:100px;">
+
+    <h1>Welcome to Library Management System! 📚</h1>
+
+    <h3>Hello, @User.Identity?.Name!</h3>
+
+    <p>You have successfully logged in.</p>
+
+    @if (User.IsInRole("Admin"))
+    {
+        <h4>Administrator Account</h4>
+    }
+    else
+    {
+        <h4>Regular User Account</h4>
+    }
+
+    <form asp-controller="Account" asp-action="Logout" method="post">
+        @Html.AntiForgeryToken()
+
+        <button type="submit"
+                style="background:#19377d;color:white;padding:12px 30px;border:0;border-radius:6px;">
+            Logout
+        </button>
+    </form>
+
+</div>
