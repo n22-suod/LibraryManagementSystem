@@ -1,0 +1,71 @@
+﻿@model IEnumerable<LibraryManagementSystem.Models.BookLoan>
+
+@{
+    ViewData["Title"] = "My Loans";
+}
+
+<div class="container mt-4">
+    <h2>My Loans</h2>
+
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-info">
+            @TempData["Message"]
+        </div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-secondary">
+            You have not requested any books yet.
+        </div>
+    }
+    else
+    {
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Book Title</th>
+                    <th>Author</th>
+                    <th>Request Date</th>
+                    <th>Due Date</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var loan in Model)
+                {
+                    <tr>
+                        <td>@(loan.Book?.Title ?? "Unknown")</td>
+                        <td>@(loan.Book?.Author ?? "Unknown")</td>
+                        <td>@loan.RequestDate.ToString("yyyy-MM-dd")</td>
+                        <td>@loan.DueDate.ToString("yyyy-MM-dd")</td>
+                        <td>
+                            @switch (loan.Status)
+                            {
+                                case LibraryManagementSystem.Models.LoanStatus.Requested:
+                                    <span class="badge bg-warning text-dark">Requested</span>
+                                    break;
+
+                                case LibraryManagementSystem.Models.LoanStatus.Borrowed:
+                                    <span class="badge bg-success">Borrowed</span>
+                                    break;
+
+                                case LibraryManagementSystem.Models.LoanStatus.Returned:
+                                    <span class="badge bg-secondary">Returned</span>
+                                    break;
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+
+    <a asp-controller="Loan"
+       asp-action="Catalog"
+       class="btn btn-primary">
+        Back to Catalog
+    </a>
+</div>
