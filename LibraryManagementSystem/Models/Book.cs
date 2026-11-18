@@ -20,5 +20,8 @@
 
         // Indicates whether the book is available
         public bool IsAvailable { get; set; }
+
+        // Book cover image path
+        public string? CoverImagePath { get; set; }
     }
 }

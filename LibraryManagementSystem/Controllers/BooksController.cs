@@ -31,7 +31,8 @@ namespace LibraryManagementSystem.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(
-            [Bind("Title,Author,TotalCopies")] Book book)
+            [Bind("Title,Author,TotalCopies")] Book book,
+             IFormFile? coverImage)
         {
             if (book.TotalCopies < 0)
             {
@@ -42,6 +43,34 @@ namespace LibraryManagementSystem.Controllers
 
             if (ModelState.IsValid)
             {
+                if (coverImage != null && coverImage.Length > 0)
+                {
+                    var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" };
+                    var extension = Path.GetExtension(coverImage.FileName).ToLowerInvariant();
+
+                    if (!allowedExtensions.Contains(extension) ||
+                        coverImage.Length > 2 * 1024 * 1024)
+                    {
+                        ModelState.AddModelError("coverImage",
+                            "Please upload a JPG or PNG image under 2 MB.");
+                        return View(book);
+                    }
+
+                    var fileName = Guid.NewGuid().ToString() + extension;
+                    var folderPath = Path.Combine(
+                        Directory.GetCurrentDirectory(), "wwwroot", "covers");
+
+                    Directory.CreateDirectory(folderPath);
+
+                    var filePath = Path.Combine(folderPath, fileName);
+
+                    using (var stream = new FileStream(filePath, FileMode.CreateNew))
+                    {
+                        await coverImage.CopyToAsync(stream);
+                    }
+
+                    book.CoverImagePath = "/covers/" + fileName;
+                }
                 book.AvailableCopies = book.TotalCopies;
                 book.IsAvailable = book.AvailableCopies > 0;
 
@@ -73,8 +102,10 @@ namespace LibraryManagementSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(
             int id,
-            [Bind("Id,Title,Author,TotalCopies,AvailableCopies")]
-            Book book)
+           [Bind("Id,Title,Author,TotalCopies,AvailableCopies")]
+           Book book,
+           IFormFile? coverImage)
+
         {
             if (id != book.Id)
                 return NotFound();
@@ -96,7 +127,34 @@ namespace LibraryManagementSystem.Controllers
 
             if (existingBook == null)
                 return NotFound();
+            if (coverImage != null && coverImage.Length > 0)
+            {
+                var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" };
+                var extension = Path.GetExtension(coverImage.FileName).ToLowerInvariant();
 
+                if (!allowedExtensions.Contains(extension) ||
+                    coverImage.Length > 2 * 1024 * 1024)
+                {
+                    ModelState.AddModelError("coverImage",
+                        "Please upload a JPG or PNG image under 2 MB.");
+                    return View(book);
+                }
+
+                var fileName = Guid.NewGuid().ToString() + extension;
+                var folderPath = Path.Combine(
+                    Directory.GetCurrentDirectory(), "wwwroot", "covers");
+
+                Directory.CreateDirectory(folderPath);
+
+                var filePath = Path.Combine(folderPath, fileName);
+
+                using (var stream = new FileStream(filePath, FileMode.CreateNew))
+                {
+                    await coverImage.CopyToAsync(stream);
+                }
+
+                existingBook.CoverImagePath = "/covers/" + fileName;
+            }
             existingBook.Title = book.Title;
             existingBook.Author = book.Author;
             existingBook.TotalCopies = book.TotalCopies;
@@ -148,7 +206,20 @@ namespace LibraryManagementSystem.Controllers
 
             _context.Books.Remove(book);
             await _context.SaveChangesAsync();
+            if (!string.IsNullOrEmpty(book.CoverImagePath))
+            {
+                var fileName = Path.GetFileName(book.CoverImagePath);
+                var filePath = Path.Combine(
+                    Directory.GetCurrentDirectory(),
+                    "wwwroot",
+                    "covers",
+                    fileName);
 
+                if (System.IO.File.Exists(filePath))
+                {
+                    System.IO.File.Delete(filePath);
+                }
+            }
             return RedirectToAction(nameof(Index));
         }
     }
