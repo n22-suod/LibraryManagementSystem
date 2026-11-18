@@ -1,0 +1,30 @@
+@model LibraryManagementSystem.Models.Book
+
+@{
+    ViewData["Title"] = "Delete Confirmation";
+}
+
+<h2 class="text-danger mb-4">Confirm Book Deletion</h2>
+
+<div class="alert alert-warning">
+    Are you sure you want to permanently delete this book?
+</div>
+
+<div class="card p-4 mb-3 border-danger">
+    <h4>@Model.Title</h4>
+    <p><strong>Author:</strong> @Model.Author</p>
+    <p><strong>Available Copies:</strong> @Model.AvailableCopies</p>
+</div>
+
+<form asp-action="Delete" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="Id" />
+
+    <button type="submit" class="btn btn-danger">
+        Yes, Confirm Delete
+    </button>
+
+    <a asp-action="Index" class="btn btn-secondary">
+        Cancel
+    </a>
+</form>

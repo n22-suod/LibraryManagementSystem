@@ -1,0 +1,43 @@
+@model LibraryManagementSystem.Models.Book
+
+@{
+    ViewData["Title"] = "Edit Book";
+}
+
+<h2 class="text-primary mb-4">Edit Book Details</h2>
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Edit" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="Id" />
+
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">Book Title</label>
+                <input asp-for="Title" class="form-control" required />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">Author Name</label>
+                <input asp-for="Author" class="form-control" required />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">Total Copies</label>
+                <input asp-for="TotalCopies" class="form-control"
+                       type="number" min="0" required />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">Available Copies</label>
+                <input asp-for="AvailableCopies" class="form-control"
+                       type="number" min="0" required />
+            </div>
+
+            <button type="submit" class="btn btn-primary">Update Book</button>
+            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
