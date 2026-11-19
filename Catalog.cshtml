@@ -1,0 +1,95 @@
+﻿@model IEnumerable<LibraryManagementSystem.Models.Book>
+
+@{
+    ViewData["Title"] = "Book Catalog";
+}
+
+<div class="container mt-4">
+    <h2>Book Catalog</h2>
+
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-info">
+            @TempData["Message"]
+        </div>
+    }
+
+    <form asp-action="Catalog" method="get" class="mb-3">
+        <div class="input-group">
+            <input type="text"
+                   name="searchString"
+                   value="@ViewBag.SearchString"
+                   class="form-control"
+                   placeholder="Search by title or author" />
+
+            <button type="submit" class="btn btn-primary">
+                Search
+            </button>
+        </div>
+    </form>
+
+    <div class="mb-3">
+        <a asp-action="Catalog" asp-route-sortOrder="title"
+           class="btn btn-outline-secondary">Sort by Title</a>
+
+        <a asp-action="Catalog" asp-route-sortOrder="author"
+           class="btn btn-outline-secondary">Sort by Author</a>
+    </div>
+
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Book Title</th>
+                <th>Author</th>
+                <th>Total Copies</th>
+                <th>Available Copies</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var book in Model)
+            {
+                <tr>
+                    <td>@book.Title</td>
+                    <td>@book.Author</td>
+                    <td>@book.TotalCopies</td>
+                    <td>@book.AvailableCopies</td>
+                    <td>
+                        @(book.IsAvailable && book.AvailableCopies > 0
+                                            ? "Available"
+                                            : "Not Available")
+                </td>
+                <td>
+                    @if (book.IsAvailable && book.AvailableCopies > 0)
+                        {
+                            <form asp-action="RequestLoan"
+                                  method="post">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden"
+                                       name="bookId"
+                                       value="@book.Id" />
+
+                                <button type="submit"
+                                        class="btn btn-success btn-sm">
+                                    Request Loan
+                                </button>
+                            </form>
+                        }
+                        else
+                        {
+                            <span class="text-muted">Unavailable</span>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <a asp-controller="Loan"
+       asp-action="MyLoans"
+       class="btn btn-primary">
+        My Loans
+    </a>
+</div>
